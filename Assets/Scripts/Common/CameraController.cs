@@ -7,14 +7,16 @@ namespace ARWT.Core{
         Camera cam;
 
         [System.Obsolete]
-        void Start() {
+        void Start() 
+        {
             cam = GetComponent<Camera>();
             Application.ExternalCall("cameraReady");
             
             defProj = cam.projectionMatrix;
         }
 
-        public void Update(){
+        public void Update()
+        {
             if(Input.GetKeyUp(KeyCode.C)){
                 print("fov : " + cam.fieldOfView);
                 print("aspect : " + cam.aspect);
