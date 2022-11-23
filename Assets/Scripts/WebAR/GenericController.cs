@@ -2,7 +2,8 @@
 using UnityEngine.UI;
 
 namespace ARWT.Marker{
-    public class GenericController : MonoBehaviour{
+    public class GenericController : MonoBehaviour
+    {
 
         //public string markerToListen = "hiro";
         public string markerToListen1 = "Bim_1";
@@ -10,6 +11,7 @@ namespace ARWT.Marker{
 
         public GameObject child1;
         public GameObject child2;
+        public GameObject child3;
 
         public float updateSpeed = 10;
         public float positionThreshold = 0;
@@ -18,88 +20,166 @@ namespace ARWT.Marker{
 
         bool firstTime = true;
 
+        bool _hasFoundMarker;
+        bool _hasWaited = false;
+        private float _scanTimeWaitLimit = 1.5f;
+        private float _scanTimer;
+
+
+
+
         void Start() {
-            DetectionManager.onMarkerVisible += onMarkerVisible;
-            DetectionManager.onMarkerLost += onMarkerLost;
+            DetectionManager.onMarkerVisible += onMarkerVisibleNew;
+            DetectionManager.onMarkerLost += onMarkerLostNew;
         }
 
-        void onMarkerVisible(MarkerInfo m)
+
+
+
+        //void onMarkerVisible(MarkerInfo m)
+        //{
+        //    if (m.name == markerToListen1) {
+
+        //        //child1?.SetActive(true);
+        //        child3?.SetActive(true);
+        //        uiHelper?.SetActive(false);
+        //        //gameUI?.SetActive(true);
+
+        //        if (!firstTime)
+        //        {
+        //            if (Vector3.Distance(m.position, transform.position) > positionThreshold)
+        //            {
+        //                transform.position = Vector3.Lerp(transform.position, m.position, Time.deltaTime * updateSpeed);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            transform.position = m.position;
+        //            firstTime = false;
+        //        }
+
+        //        transform.rotation = m.rotation;
+
+        //        Vector3 absScale = new Vector3(
+        //            Mathf.Abs(m.scale.x),
+        //            Mathf.Abs(m.scale.y),
+        //            Mathf.Abs(m.scale.z)
+        //        );
+
+        //        transform.localScale = absScale / 2;
+        //    }
+        //    else if (m.name == markerToListen2)
+        //    {
+
+        //        child2?.SetActive(true);
+        //        uiHelper?.SetActive(false);
+        //        //gameUI?.SetActive(true);
+
+        //        if (!firstTime)
+        //        {
+        //            if (Vector3.Distance(m.position, transform.position) > positionThreshold)
+        //            {
+        //                transform.position = Vector3.Lerp(transform.position, m.position, Time.deltaTime * updateSpeed);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            transform.position = m.position;
+        //            firstTime = false;
+        //        }
+
+        //        transform.rotation = m.rotation;
+
+        //        Vector3 absScale = new Vector3(
+        //            Mathf.Abs(m.scale.x),
+        //            Mathf.Abs(m.scale.y),
+        //            Mathf.Abs(m.scale.z)
+        //        );
+
+        //        transform.localScale = absScale / 2;
+        //    }
+        //}
+
+        void onMarkerVisibleNew(MarkerInfo m)
         {
-            if (m.name == markerToListen1) {
-
-                child1?.SetActive(true);
-                uiHelper?.SetActive(false);
-                gameUI?.SetActive(true);
-
-                if (!firstTime)
-                {
-                    if (Vector3.Distance(m.position, transform.position) > positionThreshold)
-                    {
-                        transform.position = Vector3.Lerp(transform.position, m.position, Time.deltaTime * updateSpeed);
-                    }
-                }
-                else
-                {
-                    transform.position = m.position;
-                    firstTime = false;
-                }
-
-                transform.rotation = m.rotation;
-
-                Vector3 absScale = new Vector3(
-                    Mathf.Abs(m.scale.x),
-                    Mathf.Abs(m.scale.y),
-                    Mathf.Abs(m.scale.z)
-                );
-
-                transform.localScale = absScale / 2;
-            }
-            else if (m.name == markerToListen2)
+            if (m.name == markerToListen1)
             {
-
-                child2?.SetActive(true);
-                uiHelper?.SetActive(false);
-                gameUI?.SetActive(true);
-
-                if (!firstTime)
+                // activate a timer (1.5 seconds) -> after this timer, spawn in bim
+                // on marker exit, if bim has not been found -> reset timer
+                if (_hasFoundMarker == false)
                 {
-                    if (Vector3.Distance(m.position, transform.position) > positionThreshold)
+                    ActivateScanTimer();
+                }
+
+
+                if (_hasFoundMarker == false && _hasWaited == true)
+                {
+                    child3?.SetActive(true);
+                    uiHelper?.SetActive(false);
+
+                    // setting the position
+                    if (firstTime == true)
                     {
-                        transform.position = Vector3.Lerp(transform.position, m.position, Time.deltaTime * updateSpeed);
+                        transform.position = m.position;
+                        //transform.position = Camera.main.transform.position;
+                        firstTime = false;
                     }
+
+                    // setting the rotation
+                    //transform.rotation = m.rotation;
+
+                    // setting the scale
+                    //Vector3 absScale = new Vector3(
+                    //    Mathf.Abs(m.scale.x),
+                    //    Mathf.Abs(m.scale.y),
+                    //    Mathf.Abs(m.scale.z)
+                    //);
+                    //transform.localScale = absScale / 2;
+
+                    // bool set
+                    _hasFoundMarker = true;
                 }
-                else
-                {
-                    transform.position = m.position;
-                    firstTime = false;
-                }
-
-                transform.rotation = m.rotation;
-
-                Vector3 absScale = new Vector3(
-                    Mathf.Abs(m.scale.x),
-                    Mathf.Abs(m.scale.y),
-                    Mathf.Abs(m.scale.z)
-                );
-
-                transform.localScale = absScale / 2;
             }
         }
 
-        void onMarkerLost(MarkerInfo m)
+        //void onMarkerLost(MarkerInfo m)
+        //{
+        //    if(m.name == markerToListen1){
+        //        child3?.SetActive(false);
+        //        //child1?.SetActive(false);
+        //        uiHelper?.SetActive(true);
+        //        //gameUI?.SetActive(false);
+        //        firstTime = true;
+        //    }
+        //    else if (m.name == markerToListen2)
+        //    {
+        //        child2?.SetActive(false);
+        //        uiHelper?.SetActive(true);
+        //        //gameUI?.SetActive(false);
+        //        firstTime = true;
+        //    }
+        //}
+
+        void onMarkerLostNew(MarkerInfo m)
         {
-            if(m.name == markerToListen1){
-                child1?.SetActive(false);
-                uiHelper?.SetActive(true);
-                gameUI?.SetActive(false);
-                firstTime = true;
-            }
-            else if (m.name == markerToListen2)
+            if (m.name == markerToListen1)
             {
-                child2?.SetActive(false);
-                uiHelper?.SetActive(true);
-                gameUI?.SetActive(false);
-                firstTime = true;
+                if (_hasWaited == false)
+                {
+                    _scanTimer = 0;
+                }
+            }
+        }
+
+
+        private void ActivateScanTimer()
+        {
+            _scanTimer += Time.deltaTime;
+
+            if (_scanTimer >= _scanTimeWaitLimit)
+            {
+                _hasWaited = true;
+                _scanTimer = 0;
             }
         }
     }
