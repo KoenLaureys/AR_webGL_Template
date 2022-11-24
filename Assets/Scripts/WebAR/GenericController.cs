@@ -6,8 +6,8 @@ namespace ARWT.Marker{
     {
 
         //public string markerToListen = "hiro";
-        public string markerToListen1 = "Bim_1";
-        public string markerToListen2 = "Mouse";
+        public string markerToListen1;
+        public string markerToListen2;
 
         public GameObject child1;
         public GameObject child2;
@@ -28,9 +28,13 @@ namespace ARWT.Marker{
 
 
 
-        void Start() {
-            DetectionManager.onMarkerVisible += onMarkerVisibleNew;
-            DetectionManager.onMarkerLost += onMarkerLostNew;
+        void Start()
+        {
+            DetectionManager.onMarkerVisible += onMarkerVisibleOnce;
+            DetectionManager.onMarkerLost += onMarkerLostOnce;
+
+            //DetectionManager.onMarkerVisible += onMarkerVisibleNormal;
+            //DetectionManager.onMarkerLost += onMarkerLostNormal;
         }
 
 
@@ -100,7 +104,7 @@ namespace ARWT.Marker{
         //    }
         //}
 
-        void onMarkerVisibleNew(MarkerInfo m)
+        void onMarkerVisibleOnce(MarkerInfo m)
         {
             if (m.name == markerToListen1)
             {
@@ -125,20 +129,43 @@ namespace ARWT.Marker{
                         firstTime = false;
                     }
 
-                    // setting the rotation
-                    //transform.rotation = m.rotation;
-
-                    // setting the scale
-                    //Vector3 absScale = new Vector3(
-                    //    Mathf.Abs(m.scale.x),
-                    //    Mathf.Abs(m.scale.y),
-                    //    Mathf.Abs(m.scale.z)
-                    //);
-                    //transform.localScale = absScale / 2;
-
                     // bool set
                     _hasFoundMarker = true;
                 }
+            }
+        }
+
+        void onMarkerVisibleNormal(MarkerInfo m)
+        {
+            if (m.name == markerToListen1)
+            {
+                child3?.SetActive(true);
+                uiHelper?.SetActive(false);
+
+                // setting the position
+                if (!firstTime)
+                {
+                    if (Vector3.Distance(m.position, transform.position) > positionThreshold)
+                    {
+                        transform.position = Vector3.Lerp(transform.position, m.position, Time.deltaTime * updateSpeed);
+                    }
+                }
+                else
+                {
+                    transform.position = m.position;
+                    firstTime = false;
+                }
+
+                // setting the rotation
+                transform.rotation = m.rotation;
+
+                // setting the scale
+                //Vector3 absScale = new Vector3(
+                //    Mathf.Abs(m.scale.x),
+                //    Mathf.Abs(m.scale.y),
+                //    Mathf.Abs(m.scale.z)
+                //);
+                //transform.localScale = absScale / 2;
             }
         }
 
@@ -160,7 +187,7 @@ namespace ARWT.Marker{
         //    }
         //}
 
-        void onMarkerLostNew(MarkerInfo m)
+        void onMarkerLostOnce(MarkerInfo m)
         {
             if (m.name == markerToListen1)
             {
@@ -168,6 +195,16 @@ namespace ARWT.Marker{
                 {
                     _scanTimer = 0;
                 }
+            }
+        }
+        void onMarkerLostNormal(MarkerInfo m)
+        {
+            if (m.name == markerToListen1)
+            {
+                child3?.SetActive(false);
+                uiHelper?.SetActive(true);
+
+                firstTime = true;
             }
         }
 
