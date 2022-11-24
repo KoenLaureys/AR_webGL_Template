@@ -1,5 +1,13 @@
 fileFormatVersion: 2
+<<<<<<< Updated upstream
 guid: cabceae44898746488525be4a42df0be
+=======
+<<<<<<< Updated upstream:Assets/Character/Temp_Mats.meta
+guid: d95cffd891190a24c961812b5381410f
+=======
+guid: cabceae44898746488525be4a42df0be
+>>>>>>> Stashed changes:Assets/Animations.meta
+>>>>>>> Stashed changes
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}
