@@ -30,11 +30,11 @@ namespace ARWT.Marker{
 
         void Start()
         {
-            DetectionManager.onMarkerVisible += onMarkerVisibleOnce;
-            DetectionManager.onMarkerLost += onMarkerLostOnce;
+            //DetectionManager.onMarkerVisible += onMarkerVisibleOnce;
+            //DetectionManager.onMarkerLost += onMarkerLostOnce;
 
-            //DetectionManager.onMarkerVisible += onMarkerVisibleNormal;
-            //DetectionManager.onMarkerLost += onMarkerLostNormal;
+            DetectionManager.onMarkerVisible += onMarkerVisibleNormal;
+            DetectionManager.onMarkerLost += onMarkerLostNormal;
         }
 
 
